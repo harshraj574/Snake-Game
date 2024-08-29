@@ -25,6 +25,15 @@ body {
     margin: 10px 0;
 }
 
+#high-score{
+    font-size: x-large;
+    font-weight: bold;
+    color: black;
+    margin: 10px 0;
+    /* height: 10vh;
+    width: 10vw; */
+}
+
 .start-button {
     background-color: orangered;
     color: white;
