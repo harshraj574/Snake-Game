@@ -12,9 +12,11 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     let dx= cellSize;
     let dy = 0;
+    let setId;
+    let gameSpeed = 200;
 
     function newFood(){
-        food = {x: Math.floor(Math.random()*(20))*20,y: Math.floor(Math.random()*(20))*20};
+        food = {x: Math.floor(Math.random()*(20))*cellSize,y: Math.floor(Math.random()*(20))*cellSize};
         // food = {x: Math.floor(Math.random()*30)*20,y: Math.floor(Math.random()*30)*20};
     }
 
@@ -33,6 +35,11 @@ document.addEventListener("DOMContentLoaded",()=>{
             document.getElementById('high-score').textContent = `HighScore: ${localStorage.getItem("highScore")}`;
 
             newFood();
+            if(gameSpeed >50){
+                clearInterval(setInterval);
+                gameSpeed -=1;
+                gameLoop();
+            }
         }
         else{
             snake.pop(); // Remove tail
@@ -84,32 +91,41 @@ document.addEventListener("DOMContentLoaded",()=>{
     }
 
     function gameOver(){ 
-        if(snake[0].x > 560 || snake[0].y > (arenaSize-(snake.length*cellSize)-40)){
-            clearInterval(setId); 
-            // gameArena.innerHTML = '';
-        }
-        else if(snake[0].y < 20 || snake[0].x < 20 ){
-            clearInterval(setId);     
-            // gameArena.innerHTML = '';
-            // initiateGame();
-        }
+       //body collison
+       for(let i=1;i<snake.length;i++){
+        if(snake[0].x == snake[i].x && snake[0].y == snake[i].y){
+            return true;
+        } 
+       }
+       // wall collison logic
+       const hitLeftWall = snake[0].x < 0;
+        const hitRightWall = snake[0].x > arenaSize-cellSize;
+        const hitTopWall  = snake[0].y < 0;
+        const hitBottomWall = snake[0].y > arenaSize-cellSize-50;
+        return hitBottomWall || hitRightWall || hitLeftWall || hitTopWall;
     }
 
     function gameLoop(){
        
-        let setId =  setInterval(()=>{
-            gameOver();
+         setId =  setInterval(()=>{
+            if(gameOver()){
+                clearInterval(setId);
+                gameStarted = false;
+                alert("Game Over");
+                return;
+            }
             updateSnake();
             drawFoodAndSnake();
-        },200);   
+        },gameSpeed);   
     }
 
     function runGame(){
         if(!gameStarted){
             gameStarted = true;
             document.addEventListener('keydown',changeDirection);
-            gameLoop(); 
+            gameLoop();
         }
+
 
     }
 
